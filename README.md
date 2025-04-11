@@ -3,13 +3,21 @@
 ## preprocessing1 : <br />
 
 root <br />
+<br />
 |
+<br />
 hin-mai, hin-guj.... <br />
+<br />
 |          |.... <br />
+<br />
 EDU, GOV,... <br />
+<br />
 |
+<br />
 sub_folder1, sub_folder2....<br />
+<br />
 |
+<br />
 file1.txt, file2.txt.... <br />
 
 Given the above directory structure, the preprocessing1 does the following: <br />
