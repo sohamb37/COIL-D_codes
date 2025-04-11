@@ -1,16 +1,16 @@
 # COIL-D_codes
 
-## preprocessing1 :
+## preprocessing1 : \\
 
-root
+root \\
 |
-hin-mai, hin-guj....
-|          |....
-EDU, GOV,...
+hin-mai, hin-guj.... \\
+|          |.... \\
+EDU, GOV,... \\
 |
-sub_folder1, sub_folder2....
+sub_folder1, sub_folder2.... \\
 |
-file1.txt, file2.txt....
+file1.txt, file2.txt.... \\
 
 Given the above directory structure, the preprocessing1 does the following:
 
