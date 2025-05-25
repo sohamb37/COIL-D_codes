@@ -81,41 +81,80 @@ def process_translation_files(directories):
         
         combined_text = ""
         file_count = 0
-        header_added = False
+        headers_added = set()
         
+        # for file in os.listdir(path):
+        #     if file.endswith(".txt"):
+        #         file_path = os.path.join(path, file)
+        #         try:
+        #             with open(file_path, 'r', encoding='utf-8') as f:
+        #                 text = f.read()
+
+        #                 lines = text.splitlines()
+        #                 processed_lines = []
+
+
+        #                 for line in lines:
+        #                     # Check for header lines
+        #                     if any(header in line for header in ["Source_text", "Translated_Text", "Reviewed_Text"]):
+        #                         # Only add header if it is not there
+        #                         if not header_added:
+        #                             processed_lines.append(line)
+        #                             header_added = True
+
+        #                         else:
+        #                             # Skip the line if already added and add the other lines noramlly
+        #                             processed_lines.append(lines)
+
+        #                 # Join the processed lines 
+        #                 processed_text = "\n".join(processed_lines)
+
+        #                 if processed_text.strip():
+        #                     # Combine only if there is content
+        #                     combined_text += processed_text + "\n"
+
+
+
+        #                 # combined_text += text + "\n"
+        #             file_count += 1
+        #         except Exception as e:
+        #             print(f"Error reading file {file_path}: {e}")
+
         for file in os.listdir(path):
             if file.endswith(".txt"):
                 file_path = os.path.join(path, file)
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         text = f.read()
-
-                        lines = text.splitlines()
-                        processed_lines = []
-
-
+                        
+                        # Split into lines and filter headers
+                        lines = text.split('\n')
+                        filtered_lines = []
+                        
                         for line in lines:
-                            # Check for header lines
-                            if any(header in line for header in ["Source_text", "Translated_Text", "Reviewed_Text"]):
-                                # Only add header if it is not there
-                                if not header_added:
-                                    processed_lines.append(line)
-                                    header_added = True
-
-                                else:
-                                    # Skip the line if already added and add the other lines noramlly
-                                    processed_lines.append(lines)
-
-                        # Join the processed lines 
-                        processed_text = "\n".join(processed_lines)
-
-                        if processed_text.strip():
-                            # Combine only if there is content
-                            combined_text += processed_text + "\n"
-
-
-
-                        # combined_text += text + "\n"
+                            # Check if line contains any header
+                            is_header = False
+                            header_found = None
+                            
+                            for header in ["Source_Text", "Translated_Text", "Reviewed_Text"]:
+                                if header in line:
+                                    is_header = True
+                                    header_found = header
+                                    break
+                            
+                            if is_header:
+                                # Only add if this header type hasn't been added yet
+                                if header_found not in headers_added:
+                                    filtered_lines.append(line)
+                                    headers_added.add(header_found)
+                            else:
+                                # Add non-header lines
+                                filtered_lines.append(line)
+                        
+                        # Join back and add to combined text
+                        filtered_text = '\n'.join(filtered_lines)
+                        combined_text += filtered_text + "\n"
+                        
                     file_count += 1
                 except Exception as e:
                     print(f"Error reading file {file_path}: {e}")
