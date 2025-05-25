@@ -30,7 +30,7 @@ Given the above directory structure, the preprocessing1 does the following:
   <br />
 - This will also show the no of lines in each of those output files in terms of primary-domains, lan-pair and review status.
 
-## combine_translated_files.py : <br />
+## combine_translated_files_v1.py : <br />
 
 Given the same directory structure as before, this file does the following: <br />
 
@@ -39,7 +39,11 @@ Given the same directory structure as before, this file does the following: <br 
 - **python3 combine_translated_files.py /path/to/parent/folder -o -- output desired path/ to save/ the combined text** is used to combine and save the files organized by language pair, domain, and type. (optional) <br />
 - **python3 combine_translated_files.py /path/to/parent/folder -c -- csv desired path/ to save the statistics/ as csv file** is used to save the display stats as csv file.(optional) <br />
 
+## combine_translated_files_v2.py : <br />
 
-
+Updates: <br />
+- **python3 combine_translated_files.py /path/to/parent/folder -cons -- consortium desired path/ to save the combined source_translated/ as text file** is used to save the combined source_translated files, maintaining the same directory structure in the given path to be shared with the other consortium members. <br />
+- Improved the process_translation_files function to add the header only once per combined file. <br />
+- Corrected the count_lines_and_words function.
 
 

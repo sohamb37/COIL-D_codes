@@ -4,7 +4,8 @@
 using v8
 python3 combine_translated_files.py /path/to/parent/folder - just get the stats after combining
 python3 combine_translated_files.py /path/to/parent/folder -o combined_output.txt - write down the combined files as well
-python combine_translated_files.py /path/to/root -o output_directory -j stats.json -c stats.csv
+python3 combine_translated_files.py /path/to/root -o output_directory -j stats.json -c stats.csv
+python3 combine_translated_files.py /path/to/root -c /path/to/consortium/folder  -  Save consortium source_translated files only
 
 '''
 
@@ -80,6 +81,7 @@ def process_translation_files(directories):
         
         combined_text = ""
         file_count = 0
+        header_added = False
         
         for file in os.listdir(path):
             if file.endswith(".txt"):
@@ -87,7 +89,33 @@ def process_translation_files(directories):
                 try:
                     with open(file_path, 'r', encoding='utf-8') as f:
                         text = f.read()
-                        combined_text += text + "\n"
+
+                        lines = text.splitlines()
+                        processed_lines = []
+
+
+                        for line in lines:
+                            # Check for header lines
+                            if any(header in line for header in ["Source_text", "Translated_Text", "Reviewed_Text"]):
+                                # Only add header if it is not there
+                                if not header_added:
+                                    processed_lines.append(line)
+                                    header_added = True
+
+                                else:
+                                    # Skip the line if already added and add the other lines noramlly
+                                    processed_lines.append(lines)
+
+                        # Join the processed lines 
+                        processed_text = "\n".join(processed_lines)
+
+                        if processed_text.strip():
+                            # Combine only if there is content
+                            combined_text += processed_text + "\n"
+
+
+
+                        # combined_text += text + "\n"
                     file_count += 1
                 except Exception as e:
                     print(f"Error reading file {file_path}: {e}")
@@ -261,19 +289,55 @@ def save_stats_json(stats, output_file):
     print(f"Saved statistics to {output_file}")
 
 
+def save_consortium_files(stats, consortium_path):
+    """Save combined source_translated text files to consortium path maintaining directory structure."""
+    if not consortium_path:
+        return
+    
+    print(f"\nSaving consortium files to f{consortium_path}")
+
+    for lang_pair, domains in stats.items():
+        for domain, types in domains.items():
+            # Only process source_translated files
+            if "source_translated" in types and types["source_translated"]["combined_text"]:
+                # Create directory structure: consortium_path/lang_pair/domain/
+                output_dir = os.path.join(consortium_path, lang_pair, domain)
+                os.makedirs(output_dir, exist_ok=True)
+                
+                # Save the combined source_translated text
+                file_path = os.path.join(output_dir, "source_translated_combined.txt")
+                
+                try:
+                    with open(file_path, 'w', encoding='utf-8') as f:
+                        f.write(types["source_translated"]["combined_text"])
+                    
+                    print(f"Saved: {file_path}")
+                    print(f"  - Lines: {types['source_translated']['lines']}")
+                    print(f"  - Words: {types['source_translated']['words']}")
+                    print(f"  - Files combined: {types['source_translated']['files']}")
+                    
+                except Exception as e:
+                    print(f"Error saving consortium file {file_path}: {e}")
+    
+    print(f"\nConsortium files saved successfully to: {consortium_path}")
+
+
+
 def main():
     parser = argparse.ArgumentParser(description="Analyze translation files by language pair and domain")
     parser.add_argument("folder", help="Path to the parent folder containing the folder structure")
     parser.add_argument("-o", "--output", help="Directory to save the combined text files (optional)")
     parser.add_argument("-j", "--json", help="Path to save statistics as JSON (optional)")
     parser.add_argument("-c", "--csv", help="Papython3 combine_translated_files.py /path/to/parent/folder -o combined_output.txtth to save statistics as CSV (optional)")
+    parser.add_argument("-cons", "--consortium", help="Add combined source_translated data to a seperate path to be shared with the consortium")
     
     args = parser.parse_args()
     parent_folder = args.folder
     output_dir = args.output
     json_file = args.json
     csv_file = args.csv
-    
+    consortium_path = args.consortium
+
     if not os.path.isdir(parent_folder):
         print(f"Error: {parent_folder} is not a valid directory")
         return
@@ -304,6 +368,10 @@ def main():
     # Save statistics as JSON if specified
     if json_file:
         save_stats_json(stats, json_file)
+
+    # Save combined text for source_translated to consortium path if specified
+    if consortium_path:
+        save_consortium_files(stats, consortium_path)
 
     # return df
 
