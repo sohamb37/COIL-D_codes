@@ -5,7 +5,7 @@ using v8
 python3 combine_translated_files.py /path/to/parent/folder - just get the stats after combining
 python3 combine_translated_files.py /path/to/parent/folder -o combined_output.txt - write down the combined files as well
 python3 combine_translated_files.py /path/to/root -o output_directory -j stats.json -c stats.csv
-python3 combine_translated_files.py /path/to/root -c /path/to/consortium/folder  -  Save consortium source_translated files only
+python3 combine_translated_files.py /path/to/root -cons /path/to/consortium/folder  -  Save consortium source_translated files only
 
 '''
 
